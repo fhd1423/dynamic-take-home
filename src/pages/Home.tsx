@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDynamicContext } from '@dynamic-labs/sdk-react';
-import functions from './functions';
+import functions from '../helpers/functions';
 
 const Home = () => {
   const {
