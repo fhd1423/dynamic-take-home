@@ -5,35 +5,50 @@ import { ethers, JsonRpcProvider } from "ethers"
 const provider = new JsonRpcProvider('https://sepolia.infura.io/v3/91de7ed3c17344cc95f8ea31bf6b3adf')
 
 const getBalanceForUser = async (public_key: string) => {
-  let userBalance = await provider.getBalance(public_key)
-  return ethers.formatEther(userBalance)
+  try {
+    let userBalance = await provider.getBalance(public_key)
+    return ethers.formatEther(userBalance)
+  } catch (e) {
+    throw new Error('Invalid address')
+  }
 }
 
 const signMessage = async (private_key: string, message: string) => {
-  let userWallet = new ethers.Wallet(private_key, provider);
-  let result = await userWallet.signMessage(message)
-  return result
+  try {
+    let userWallet = new ethers.Wallet(private_key, provider);
+    let result = await userWallet.signMessage(message)
+    return result
+  } catch (e) {
+    throw new Error('Invalid private key')
+  }
 }
 
 const sendTransaction = async (private_key: string, toAddress: string, amount: string) => {
-  if (parseInt(amount) > 0) {
+  if (parseFloat(amount) > 0) {
+    if (!ethers.isAddress(toAddress))
+      throw new Error('invalid address')
     const tx = {
       to: toAddress,
       value: ethers.parseEther(amount).toString()
-    }
-    let userWallet = new ethers.Wallet(private_key, provider);
+    };
+    let userWallet;
     try {
-      let transaction = await userWallet.sendTransaction(tx)
+      userWallet = new ethers.Wallet(private_key, provider);
+      let transaction = await userWallet.sendTransaction(tx);
       await transaction.wait();
 
-      console.log(`Transaction successful with hash: ${transaction.hash}`)
-      return transaction
-    }
-    catch (e) {
-      return false
+      console.log(`Transaction successful with hash: ${transaction.hash}`);
+      return transaction;
+    } catch (e) {
+      if (!userWallet) {
+        throw new Error('invalid private key');
+      } else {
+        throw new Error('error sending transaction, check that you have enough balance');
+      }
     }
   }
-}
+  else { throw new Error('amount must be greater than 0'); }
+};
 
 const checkWalletExists = async (metamask: string) => {
   if (metamask === '') return { exists: false };
@@ -48,13 +63,10 @@ const checkWalletExists = async (metamask: string) => {
 
 const createWalletForUser = async (metamask: string) => {
   // Check if wallet already exists for this user
-  const docRef = doc(db, "users", metamask);
-  const docSnap = await getDoc(docRef);
-  if (docSnap.exists()) {
+  if ((await checkWalletExists(metamask)).exists) {
     alert('A wallet already exists for this user.');
     return;
   }
-
   // Create new wallet for user
   const userWallet = ethers.Wallet.createRandom(provider);
   alert('Your wallet has been created: ' + userWallet.address + '. Now loading your wallet..');
@@ -68,7 +80,15 @@ const addDynamicWalletToFirestore = async (metamask: string, public_key: string,
     public_key: public_key,
     private_key: private_key
   });
-  console.log('added');
 }
 
-export default { getBalanceForUser, signMessage, sendTransaction, checkWalletExists, createWalletForUser, addDynamicWalletToFirestore }
+const functions = {
+  getBalanceForUser,
+  signMessage,
+  sendTransaction,
+  checkWalletExists,
+  createWalletForUser,
+  addDynamicWalletToFirestore
+};
+
+export default functions;

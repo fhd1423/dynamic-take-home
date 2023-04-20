@@ -28,7 +28,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/pages/mainpage.js"
+    "src/pages/mainpage.js",
+    "src/helpers/testing.tets.js"
   ],
   "exclude": [
     "node_modules"
