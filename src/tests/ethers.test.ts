@@ -85,15 +85,15 @@ describe('sendTransaction', () => {
     ).rejects.toThrow('invalid address');
   });
   test('should successfully send a transaction if the private key, address, and amount are valid', async () => {
-    const senderPrivateKey = some_private_key; // Replace with a valid Ethereum private key
-    const receiverAddress = some_address; // Replace with a valid Ethereum address
+    const senderPrivateKey = some_private_key;
+    const receiverAddress = some_address;
     const amount = '0.01';
 
     const transaction = await sendTransaction(senderPrivateKey, receiverAddress, amount);
 
     expect(transaction.to).toEqual(some_address);
     expect(transaction.value).toEqual(ethers.parseEther('0.01'))
-  }, 200000);
+  }, 30000);
 
   test('should throw an error if no balance', async () => {
     const validPrivateKey_no_balance = ethers.Wallet.createRandom(provider).privateKey

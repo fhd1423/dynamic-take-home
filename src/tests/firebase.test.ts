@@ -32,7 +32,6 @@ describe("checkWalletExists", () => {
   });
 
   test("checks if wallet exists", async () => {
-    // Prepare test data
     const metamask = "exampleMetamask";
     const publicKey = "examplePublicKey";
     const privateKey = "examplePrivateKey";
@@ -50,27 +49,25 @@ describe("checkWalletExists", () => {
       public_key: publicKey,
       private_key: privateKey,
     });
-  }, 30000);
+  });
 
   test("checks if wallet doesnt exists", async () => {
-    // Prepare test data
     const metamask = "exampleMetamask";
 
     const result = await checkWalletExists(metamask);
     expect(result).toEqual({
       exists: false,
     });
-  }, 30000);
+  });
 
   test("checks if wallet empty string", async () => {
-    // Prepare test data
     const metamask = "";
 
     const result = await checkWalletExists(metamask);
     expect(result).toEqual({
       exists: false,
     });
-  }, 30000);
+  });
 })
 
 describe("createWalletForUser", () => {
@@ -85,8 +82,6 @@ describe("createWalletForUser", () => {
     const metamask = "exampleMetamask";
     const publicKey = "examplePublicKey";
     const privateKey = "examplePrivateKey";
-
-    // Create a user wallet in Firestore
     await testDb.collection("users").doc(metamask).set({
       public_key: publicKey,
       private_key: privateKey,
@@ -94,7 +89,6 @@ describe("createWalletForUser", () => {
 
     await createWalletForUser(metamask)
 
-    // Check if alert was called
     expect(alert).toHaveBeenCalledTimes(1);
     expect(alert).toHaveBeenNthCalledWith(1, "A wallet already exists for this user.");
   });
@@ -106,7 +100,6 @@ describe("createWalletForUser", () => {
 
     const alertArgs = (alert as jest.Mock).mock.calls[0];
 
-    // Check if alert was called
     expect(alert).toHaveBeenCalledTimes(1);
     expect(alertArgs[0]).toEqual(expect.stringContaining("Your wallet has been created:"));
   });
@@ -127,15 +120,12 @@ describe("addDynamicWalletToFirestore", () => {
     const publicKey = "examplePublicKey";
     const privateKey = "examplePrivateKey";
 
-    // Call addDynamicWalletToFirestore function
     await addDynamicWalletToFirestore(metamask, publicKey, privateKey);
 
-    // Fetch the wallet data from Firestore
     const walletDocRef = testDb.collection('users').doc(metamask);
     const walletDocSnap = await walletDocRef.get();
     const walletData = walletDocSnap.data();
 
-    // Check if the wallet was added to Firestore
     expect(walletData).toEqual({
       public_key: publicKey,
       private_key: privateKey,
