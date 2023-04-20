@@ -31,7 +31,7 @@ describe("checkWalletExists", () => {
     await deleteCollection(testDb, "users");
   });
 
-  test("checks if wallet exists", async () => {
+  test("checks if wallet exists, true", async () => {
     const metamask = "exampleMetamask";
     const publicKey = "examplePublicKey";
     const privateKey = "examplePrivateKey";
@@ -51,7 +51,7 @@ describe("checkWalletExists", () => {
     });
   });
 
-  test("checks if wallet doesnt exists", async () => {
+  test("checks if wallet exists, false", async () => {
     const metamask = "exampleMetamask";
 
     const result = await checkWalletExists(metamask);
