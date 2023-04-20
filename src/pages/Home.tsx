@@ -16,13 +16,21 @@ const Home = () => {
   const [shouldRender, setShouldRender] = useState(false);
 
   const handleGetBalanceClick = async () => {
-    let userBalance = await functions.getBalanceForUser(publicKey);
-    alert("your dynamic wallet ETH balance is: " + userBalance.toString());
+    try {
+      let userBalance = await functions.getBalanceForUser(publicKey);
+      alert("your dynamic wallet ETH balance is: " + userBalance.toString());
+    } catch (e) {
+      alert("Error: " + e);
+    }
   };
 
   const handleSignMessageClick = async () => {
-    let result = await functions.signMessage(privateKey, stringToSign);
-    alert('signed transaction: ' + result);
+    try {
+      let result = await functions.signMessage(privateKey, stringToSign);
+      alert('signed transaction: ' + result);
+    } catch (e) {
+      alert("Error: " + e);
+    }
   };
 
   const handleSendTransactionClick = async () => {
