@@ -4,7 +4,7 @@ import Navbar from './Navbar';
 import Home from './Home';
 
 const App = () => (
-  <DynamicContextProvider settings={{ environmentId: '27c02be4-503e-4531-9538-bd1a32781d30' }}>
+  <DynamicContextProvider settings={{ environmentId: 'b043b1a4-b703-4f61-91b3-fd33fe32eb25' }}>
     <div>
       <Navbar />
       <Home />
